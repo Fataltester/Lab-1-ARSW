@@ -20,9 +20,14 @@ public class CountThreadsMain {
         thread2.counting(99,199);
         thread3.counting(200,299);
         
-        thread1.start();
-        thread2.start();
-        thread3.start();
+        //thread1.run();
+        //thread2.run();
+        //thread3.run();
+        
+        //thread1.start();
+        //thread2.start();
+        //thread3.start();
+
     }
     
 }
