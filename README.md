@@ -1,52 +1,41 @@
 
 ### Escuela Colombiana de Ingeniería
-### Arquitecturas de Software - ARSW
+### Arquitecturas de Software - ARSW 2025-2
 ## Ejercicio Introducción al paralelismo - Hilos - Caso BlackListSearch
-
-
-### Dependencias:
-####   Lecturas:
-*  [Threads in Java](http://beginnersbook.com/2013/03/java-threads/)  (Hasta 'Ending Threads')
-*  [Threads vs Processes]( http://cs-fundamentals.com/tech-interview/java/differences-between-thread-and-process-in-java.php)
-
-### Descripción
-  Este ejercicio contiene una introducción a la programación con hilos en Java, además de la aplicación a un caso concreto.
+## Integrantes:
+### Juan David Martínez Mendez
+### Santiago Gualdrón Rincón
   
 
 **Parte I - Introducción a Hilos en Java**
 
 1. De acuerdo con lo revisado en las lecturas, complete las clases CountThread, para que las mismas definan el ciclo de vida de un hilo que imprima por pantalla los números entre A y B.
-2. Complete el método __main__ de la clase CountMainThreads para que:
-	1. Cree 3 hilos de tipo CountThread, asignándole al primero el intervalo [0..99], al segundo [99..199], y al tercero [200..299].
-	2. Inicie los tres hilos con 'start()'.
-	3. Ejecute y revise la salida por pantalla. 
-	4. Cambie el incio con 'start()' por 'run()'. Cómo cambia la salida?, por qué?.
+
+Para la clase definimos dos variables importantes A y B, las cuales hacen referencia a las entradas de los números, suponiendo que en todos los casos A <= B, realizamos la siguiente implementación:
+
+<img width="697" height="427" alt="image" src="https://github.com/user-attachments/assets/5a850fbe-96ce-4652-9953-799b9d8176a5" />
+
+Dentro del método run implementamos un timer que nos muestre cuánto tiempo le toma al thread completar la tarea además de la implementación solicitada. Al finalizar la tarea notifica la terminación de la misma junto con el tiempo que le tomo realizarla.
+
+3. Complete el método __main__ de la clase CountMainThreads para que:
+
+<img width="697" height="310" alt="image" src="https://github.com/user-attachments/assets/e128319a-1798-459a-9ff0-b94f46207c5f" />
+
+El método "counting" de la clase "CountThread" lo que hace es inicializar las variables del thread y el objeto, también asignamos los intervalos a cada uno de los tres threads, este es el resultado de la ejecución:
+
+<img width="844" height="610" alt="image" src="https://github.com/user-attachments/assets/c159e4cf-af96-4210-81fb-54d7891e7e29" />
+
+Procedemos a cambiar el método de ejecución a run, este es el resultado:
+
+<img width="809" height="584" alt="image" src="https://github.com/user-attachments/assets/21a106fa-17fa-4b3b-8ac1-eaa06f6636a6" />
+
+Como podemos evidenciar en las capturas, hay una clara diferencia entre ejecutar los threads con start y run
+
+start() -> crea un nuevo hilo y lo programa para la ejecución, la ejecución del hilo es de manera concurrente, es decir, el hilo trabaja de forma simultánea con el hilo principal y otros hilos, por eso la salida de números no es ordenada sino "aleatoria" acorde a como trabaje cada thread.
+
+run() -> la tarea se ejecuta desde el hilo que lo llama más NO en un nuevo hilo, por lo que en este caso NO se evidencia concurrencia, por eso la salida es el resultado de cada thread de acuerdo al orden de ejecución.
 
 **Parte II - Ejercicio Black List Search**
-
-
-Para un software de vigilancia automática de seguridad informática se está desarrollando un componente encargado de validar las direcciones IP en varios miles de listas negras (de host maliciosos) conocidas, y reportar aquellas que existan en al menos cinco de dichas listas. 
-
-Dicho componente está diseñado de acuerdo con el siguiente diagrama, donde:
-
-- HostBlackListsDataSourceFacade es una clase que ofrece una 'fachada' para realizar consultas en cualquiera de las N listas negras registradas (método 'isInBlacklistServer'), y que permite también hacer un reporte a una base de datos local de cuando una dirección IP se considera peligrosa. Esta clase NO ES MODIFICABLE, pero se sabe que es 'Thread-Safe'.
-
-- HostBlackListsValidator es una clase que ofrece el método 'checkHost', el cual, a través de la clase 'HostBlackListDataSourceFacade', valida en cada una de las listas negras un host determinado. En dicho método está considerada la política de que al encontrarse un HOST en al menos cinco listas negras, el mismo será registrado como 'no confiable', o como 'confiable' en caso contrario. Adicionalmente, retornará la lista de los números de las 'listas negras' en donde se encontró registrado el HOST.
-
-![](img/Model.png)
-
-Al usarse el módulo, la evidencia de que se hizo el registro como 'confiable' o 'no confiable' se dá por lo mensajes de LOGs:
-
-INFO: HOST 205.24.34.55 Reported as trustworthy
-
-INFO: HOST 205.24.34.55 Reported as NOT trustworthy
-
-
-Al programa de prueba provisto (Main), le toma sólo algunos segundos análizar y reportar la dirección provista (200.24.34.55), ya que la misma está registrada más de cinco veces en los primeros servidores, por lo que no requiere recorrerlos todos. Sin embargo, hacer la búsqueda en casos donde NO hay reportes, o donde los mismos están dispersos en las miles de listas negras, toma bastante tiempo.
-
-Éste, como cualquier método de búsqueda, puede verse como un problema [vergonzosamente paralelo](https://en.wikipedia.org/wiki/Embarrassingly_parallel), ya que no existen dependencias entre una partición del problema y otra.
-
-Para 'refactorizar' este código, y hacer que explote la capacidad multi-núcleo de la CPU del equipo, realice lo siguiente:
 
 1. Cree una clase de tipo Thread que represente el ciclo de vida de un hilo que haga la búsqueda de un segmento del conjunto de servidores disponibles. Agregue a dicha clase un método que permita 'preguntarle' a las instancias del mismo (los hilos) cuantas ocurrencias de servidores maliciosos ha encontrado o encontró.
 
@@ -57,9 +46,10 @@ Para 'refactorizar' este código, y hacer que explote la capacidad multi-núcleo
 	* Se sabe que el HOST 202.24.34.55 está reportado en listas negras de una forma más dispersa, y que el host 212.24.24.55 NO está en ninguna lista negra.
 
 
-**Parte II.I Para discutir la próxima clase (NO para implementar aún)**
+**Parte II.I **
 
-La estrategia de paralelismo antes implementada es ineficiente en ciertos casos, pues la búsqueda se sigue realizando aún cuando los N hilos (en su conjunto) ya hayan encontrado el número mínimo de ocurrencias requeridas para reportar al servidor como malicioso. Cómo se podría modificar la implementación para minimizar el número de consultas en estos casos?, qué elemento nuevo traería esto al problema?
+Para minimizar la cantidad de consultas que los threads realizan cuando la condición ya se ha cumplido(condición de carrera), tenemos que la variable donde se reporta las ocurrencias encontradas debe ser la misma para todos los threads, por lo que esta variiable se convierte en una región crítica, así el número de ocurrencias para todos es el mismo, constantemente hay que verificar que si el total de ocurrencias es igual a 5, debemos notificar a los threads que paren la busqueda, por lo que también necesitamos un flag que sea la misma para todos, por lo que también sería una región Crítica de nuestro código.
+
 
 **Parte III - Evaluación de Desempeño**
 
