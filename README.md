@@ -107,13 +107,21 @@ Teniendo en cuenta la imagen anterior, gracias a generadores de gráficas aproxi
 
 **Parte IV - Ejercicio Black List Search**
 
-1. Según la [ley de Amdahls](https://www.pugetsystems.com/labs/articles/Estimating-CPU-Performance-using-Amdahls-Law-619/#WhatisAmdahlsLaw?):
+1. Aunque parezca que a mayor cantidad de hilos, más rápido será, realmente no es así, pongamos un ejemplo donde P = 0.9 y n = 200 y 500:
+S(200) = 9,56937799
+S(500) = 9,823182711
+De acuerdo a los resultados, la parte (1-P) es un límite teórico, va a haber un punto donde al aumentar n, no va a producir mejoras siginificativas como vemos en este caso.
 
-	![](img/ahmdahls.png), donde _S(n)_ es el mejoramiento teórico del desempeño, _P_ la fracción paralelizable del algoritmo, y _n_ el número de hilos, a mayor _n_, mayor debería ser dicha mejora. Por qué el mejor desempeño no se logra con los 500 hilos?, cómo se compara este desempeño cuando se usan 200?. 
 
-2. Cómo se comporta la solución usando tantos hilos de procesamiento como núcleos comparado con el resultado de usar el doble de éste?.
+2. Caso usar tantos hilos como núcleos: si tenemos la misma cantidad de núcleos e hilos, permite que cada núcleo trabaje en paralelo, por lo que es un punto óptimo.
 
-3. De acuerdo con lo anterior, si para este problema en lugar de 100 hilos en una sola CPU se pudiera usar 1 hilo en cada una de 100 máquinas hipotéticas, la ley de Amdahls se aplicaría mejor?. Si en lugar de esto se usaran c hilos en 100/c máquinas distribuidas (siendo c es el número de núcleos de dichas máquinas), se mejoraría?. Explique su respuesta.
+Caso de usar el doble de hilos: No necesariamente mejora el rendimiento, puede causar "contención" entre los hilos, lo que ralentiza la ejecución porque el SO tiene que gestionar más tareas que puede ejecutar en paralelo.
+
+3. Caso 100 hilos en una CPU: agregar mas hilos no mejora ya que la CPU tiene un número limitado de núcleos, puede llegar el caso donde tengamos overhead y saturación de memoria, causando que el rendimiento real sea menor al teórico.
+
+Caso 1 hilo en cada una de 100 maquinas hipotéticas: Reduce los problemas de context switching, pero al distribuir entre maquinas entra un nuevo overhead de comunicación y sincronización entre nodos, lo cual no se explica en la fórmula original, pero en la práctica estos factores hacen que el speedup sea menor al teórico.
+
+Caso c hilos en 100/c hilos: Este caso es un balance, donde se aprovecha cada máquina(usando todos los núcleos disponibles), hay menos overhead y menor comunicación entre nodos.
 
 
 
